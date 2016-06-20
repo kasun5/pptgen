@@ -1,3 +1,5 @@
+package pptgen.data;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -19,6 +21,7 @@ class ReadFile {
     private static Workbook workBook;
     private static boolean otherStatement = false;
     private static boolean gptw = false;
+    private static int numberOfSattements = 0;
     private static int grandMeanColoumn;
     private static int grandMeanRow;
     private static  int startDemoColumn;
@@ -143,6 +146,7 @@ class ReadFile {
                         float cVal = Float.parseFloat(row1.getCell(numberOfCols+1).toString());
                         float bVal = Float.parseFloat(row1.getCell(numberOfCols+2).toString());
                         database.insertCoreStatement(val,cVal,bVal);
+                        numberOfSattements++;
                     }
 
                 }
@@ -329,7 +333,9 @@ class ReadFile {
         database.closeConnection(); //for testing
 
     }
-
+    static int getNumberOfSattements(){
+        return numberOfSattements;
+    }
     static DataBase getDataBase(){
         return database;
     }

@@ -1,3 +1,5 @@
+package pptgen.data;
+
 import java.sql.ResultSet;
 import java.sql.SQLException;
 

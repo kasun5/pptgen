@@ -1,3 +1,5 @@
+package pptgen.data;
+
 /**
  * Created by Thilina on 6/8/2016.
  *

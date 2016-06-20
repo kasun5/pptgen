@@ -1,3 +1,5 @@
+package pptgen.data;
+
 import java.io.File;
 import java.sql.*;
 
@@ -8,7 +10,7 @@ import java.sql.*;
  * This class store all data bse connections and table details.
  * This also handle the creation of table and insertion.
  * Keep all data read from excel file in tables and arrays and provide package local methods to the
- * DataStore to provide data to the other packages.
+ * pptgen.data.DataStore to provide data to the other packages.
  *
  */
 class DataBase {
@@ -16,7 +18,8 @@ class DataBase {
     private Connection con;
     private Statement stmnt;
     private int statementId = 0;
-    private float avarages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES+1][2];
+    private float allAverages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES+1][2];
+    private float averages[][] = new float[FileReadConstant.MAX_NUM_OF_AVERAGES][2];
     private int numberOfRespondents;
     private int cocID = 0;
     private int themeID = 0;
@@ -24,7 +27,7 @@ class DataBase {
     /**
      * @author Thilina
      *
-     * Constructor for the DataBase class
+     * Constructor for the pptgen.data.DataBase class
      *
      * Create a connection to data base and tables withing the database
      *
@@ -287,7 +290,7 @@ class DataBase {
     /**
      * @author Thilina
      *
-     * Inset avarages in to avarage array
+     * Inset allAverages in to avarage array
      *
      * @param companyAverage average value of the company
      * @param benchAverage average value of the bench mark
@@ -295,8 +298,8 @@ class DataBase {
      * */
     void insertAverage(float companyAverage, float benchAverage, int numberOfAverages){
 
-        avarages[numberOfAverages][DataBaseConstant.COMPANY_AVERAGE_INDEX] = companyAverage;
-        avarages[numberOfAverages][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX] = benchAverage;
+        allAverages[numberOfAverages][DataBaseConstant.COMPANY_AVERAGE_INDEX] = companyAverage;
+        allAverages[numberOfAverages][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX] = benchAverage;
 
     }
 
@@ -334,7 +337,7 @@ class DataBase {
      void sortTable(){
         try {
             ResultSet resultSet = this.runQuarry(DataBaseConstant.GET_JOIN_QUARRY);
-            //// TODO: 6/15/2016 do sorting and store values in the DataBaseConstant.SORT_TABLE 
+            //// TODO: 6/15/2016 do sorting and store values in the pptgen.data.DataBaseConstant.SORT_TABLE
             //// TODO: 6/15/2016 This result set contains all necessary data for the calculation and sorting and themes
             while ( resultSet.next() ) {
                 int id = resultSet.getInt(DataBaseConstant.ID_COLUMN);
@@ -487,7 +490,7 @@ class DataBase {
         try {
 
             con.close();
-           //this.deleteDataBase();
+            this.deleteDataBase();
             closed = true;
         } catch (SQLException e) {
             //todo handle
@@ -533,20 +536,30 @@ class DataBase {
     int getNumberOfRespondents(){
         return numberOfRespondents;
     }
-    float getCompanyAvarageOfSectoin(int section){
-        return avarages[section][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+
+    //copy basic averages from all averages
+    private void setupAverages(){
+
+        for(int i=0;i<FileReadConstant.MAX_NUM_OF_AVERAGES;i++){
+            for(int j=0;j<2;j++){
+                averages[i][j] = allAverages[i][j];
+            }
+        }
+
     }
 
-    float getBenchMarkAvarageOfSectoin(int section){
-        return avarages[section][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
+    float[][] getAverages(){
+        this.setupAverages();
+        return averages;
+
     }
 
-    float getCompnayGrandMean(){
-        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.COMPANY_AVERAGE_INDEX];
+    float getCompanyGrandMean(){
+        return allAverages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.COMPANY_AVERAGE_INDEX];
     }
 
     float getBenchMarkGrandMean(){
-        return avarages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
+        return allAverages[DataBaseConstant.GRAND_MEAN_INDEX][DataBaseConstant.BENCH_MARK_AVERAGE_INDEX];
     }
 
 }
